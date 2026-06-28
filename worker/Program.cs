@@ -45,7 +45,7 @@ namespace Worker
                         // Reconnect DB if down
                         if (!pgsql.State.Equals(System.Data.ConnectionState.Open))
                         {
-                            Console.WriteLine("Reconnecting DB");
+                            Console.WriteLine("Reconnecting DB!");
                             pgsql = OpenDbConnection("Server=db;Username=postgres;Password=postgres;");
                         }
                         else

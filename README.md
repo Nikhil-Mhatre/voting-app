@@ -1,65 +1,182 @@
-# Example Voting App
+# Sample Voting App - DevOps CI/CD Demo
 
-A simple distributed application running across multiple Docker containers.
+A distributed microservices application demonstrating a complete cloud-native CI/CD workflow using **GitHub Actions**, **Docker**, **Kubernetes**, and **GitOps**.
 
-## Getting started
+---
 
-Download [Docker Desktop](https://www.docker.com/products/docker-desktop) for Mac or Windows. [Docker Compose](https://docs.docker.com/compose) will be automatically installed. On Linux, make sure you have the latest version of [Compose](https://docs.docker.com/compose/install/).
+## Project Overview
 
-This solution uses Python, Node.js, .NET, with Redis for messaging and Postgres for storage.
+This project is based on Docker's Sample Voting App and has been enhanced to showcase modern DevOps practices.
 
-Run in this directory to build and run the app:
+The repository demonstrates:
 
-```shell
-docker compose up
-```
+- Docker image creation
+- Reusable GitHub Actions workflows
+- Docker Hub image publishing
+- Automated Kubernetes manifest updates
+- GitOps-ready deployment workflow
+- Kubernetes deployments
 
-The `vote` app will be running at [http://localhost:8080](http://localhost:8080), and the `results` will be at [http://localhost:8081](http://localhost:8081).
+Future enhancements include:
 
-Alternately, if you want to run it on a [Docker Swarm](https://docs.docker.com/engine/swarm/), first make sure you have a swarm. If you don't, run:
+- Argo CD Continuous Deployment
+- Azure Kubernetes Service (AKS)
+- Infrastructure provisioning with Terraform
 
-```shell
-docker swarm init
-```
-
-Once you have your swarm, in this directory run:
-
-```shell
-docker stack deploy --compose-file docker-stack.yml vote
-```
-
-## Run the app in Kubernetes
-
-The folder k8s-specifications contains the YAML specifications of the Voting App's services.
-
-Run the following command to create the deployments and services. Note it will create these resources in your current namespace (`default` if you haven't changed it.)
-
-```shell
-kubectl create -f k8s-specifications/
-```
-
-The `vote` web app is then available on port 31000 on each host of the cluster, the `result` web app is available on port 31001.
-
-To remove them, run:
-
-```shell
-kubectl delete -f k8s-specifications/
-```
+---
 
 ## Architecture
 
 ![Architecture diagram](architecture.excalidraw.png)
 
-* A front-end web app in [Python](/vote) which lets you vote between two options
-* A [Redis](https://hub.docker.com/_/redis/) which collects new votes
-* A [.NET](/worker/) worker which consumes votes and stores them in…
-* A [Postgres](https://hub.docker.com/_/postgres/) database backed by a Docker volume
-* A [Node.js](/result) web app which shows the results of the voting in real time
+The application consists of five services:
 
-## Notes
+| Service  | Technology | Purpose                                       |
+| -------- | ---------- | --------------------------------------------- |
+| Vote     | Python     | Accepts user votes                            |
+| Redis    | Redis      | Temporary message queue                       |
+| Worker   | .NET       | Processes votes and stores them in PostgreSQL |
+| Postgres | PostgreSQL | Persistent storage                            |
+| Result   | Node.js    | Displays live voting results                  |
 
-The voting application only accepts one vote per client browser. It does not register additional votes if a vote has already been submitted from a client.
+---
 
-This isn't an example of a properly architected perfectly designed distributed app... it's just a simple
-example of the various types of pieces and languages you might see (queues, persistent data, etc), and how to
-deal with them in Docker at a basic level.
+## Repository Structure
+
+```text
+.
+├── vote/
+├── worker/
+├── result/
+├── k8s-specifications/
+├── .github/
+│   └── workflows/
+│       ├── build-push-update.yml
+│       ├── vote.yml
+│       ├── worker.yml
+│       └── result.yml
+└── docker-compose.yml
+```
+
+---
+
+# Running the Application Locally
+
+## Using Docker Compose
+
+Build and start all services:
+
+```bash
+docker compose up
+```
+
+Access the application:
+
+| Service | URL                   |
+| ------- | --------------------- |
+| Vote    | http://localhost:8080 |
+| Result  | http://localhost:8081 |
+
+---
+
+## Running on Kubernetes
+
+Deploy all Kubernetes resources:
+
+```bash
+kubectl apply -f k8s-specifications/
+```
+
+Application endpoints:
+
+| Service | NodePort |
+| ------- | -------- |
+| Vote    | 31000    |
+| Result  | 31001    |
+
+To remove the application:
+
+```bash
+kubectl delete -f k8s-specifications/
+```
+
+---
+
+# GitHub Actions CI Pipeline
+
+This repository uses **reusable GitHub Actions workflows** to automate Docker image builds.
+
+Whenever changes are pushed to one of the service folders:
+
+- `vote/`
+- `worker/`
+- `result/`
+
+GitHub Actions automatically:
+
+1. Detects the modified service.
+2. Builds the Docker image.
+3. Pushes the image to Docker Hub.
+4. Updates the corresponding Kubernetes deployment manifest.
+5. Commits the updated manifest back to the repository using the **GitHub Actions bot**.
+
+The workflow is designed around a reusable template so that adding new microservices requires minimal configuration.
+
+---
+
+# CI Workflow Structure
+
+```text
+.github/
+└── workflows/
+    ├── build-push-update.yml
+    ├── vote.yml
+    ├── worker.yml
+    └── result.yml
+```
+
+- **build-push-update.yml** contains the reusable CI logic.
+- **vote.yml**, **worker.yml**, and **result.yml** are lightweight trigger workflows for each service.
+
+---
+
+# Setting Up GitHub Actions
+
+To use the CI pipeline in your own fork or cloned repository, configure:
+
+- Docker Hub Personal Access Token
+- GitHub Repository Secrets
+- GitHub Actions permissions
+
+📖 See the detailed setup guide:
+
+**[GitHub Actions CI Guide](docs/github-actions-ci.md)**
+
+This guide explains:
+
+- Creating Docker Hub credentials
+- Configuring GitHub Secrets
+- Enabling workflow permissions
+- Repository structure requirements
+- Adding new microservices
+
+---
+
+# Technologies Used
+
+- Python
+- Node.js
+- .NET
+- Redis
+- PostgreSQL
+- Docker
+- Docker Compose
+- GitHub Actions
+- Docker Hub
+- Kubernetes
+
+---
+
+# Acknowledgements
+
+This project is based on the original **Docker Sample Voting App** and has been extended to demonstrate modern DevOps workflows, CI/CD automation, and GitOps practices.

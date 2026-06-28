@@ -1,0 +1,15 @@
+name: Worker Service
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "worker/**"
+
+jobs:
+  worker:
+    uses: ./.github/workflows/build-push-update.yml
+    with:
+      service_name: worker
+    secrets: inherit

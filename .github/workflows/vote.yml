@@ -1,15 +1,15 @@
 name: Vote Service
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "vote/**"
+    push:
+        branches:
+            - main
+        paths:
+            - "vote/**"
 
 jobs:
-  vote:
-    uses: ./.github/workflows/build-push-update.yml
-    with:
-      service_name: vote
-    secrets: inherit
+    vote:
+        uses: ./.github/workflows/build-push-update.yml
+        with:
+            service_name: vote
+        secrets: inherit

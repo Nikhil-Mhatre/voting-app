@@ -33,7 +33,7 @@ namespace Worker
 
                     // Reconnect redis if down
                     if (redisConn == null || !redisConn.IsConnected) {
-                        Console.WriteLine("Reconnecting Redis!");
+                        Console.WriteLine("Reconnecting Redis");
                         redisConn = OpenRedisConnection("redis");
                         redis = redisConn.GetDatabase();
                     }

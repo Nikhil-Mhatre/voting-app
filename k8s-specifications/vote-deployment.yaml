@@ -15,7 +15,7 @@ spec:
         app: vote
     spec:
       containers:
-        - image: nikhilmhatre0317/voting-app_vote:3f59f58
+        - image: nikhilmhatre0317/voting-app_vote:2462094
           name: vote
           ports:
             - containerPort: 80

@@ -97,11 +97,11 @@ jobs:
             - name: Update Manifest
               run: |
                   yq -i '
-                     (.spec.template.spec.containers[]
-                     | select(.name=="${{ inputs.service_name }}")
-                     | .image)
-                     = "${{ env.UPDATED_IMAGE_TAG }}"
-                     ' "${{env.MANIFEST_PATH}}"
+                    (.spec.template.spec.containers[]
+                    | select(.name=="${{ inputs.service_name }}")
+                    | .image)
+                    = "${{ env.UPDATED_IMAGE_TAG }}"
+                    ' "${{env.MANIFEST_PATH}}"
 
             - name: Verify Changes
               run: |

@@ -30,9 +30,9 @@ jobs:
 
             - name: Verify Files Existence
               run: |
-                  test -d "./${{inputs.service_name}}"
-                  test -f "./${{inputs.service_name}}/Dockerfile"
-                  test -f "k8s-specifications/${{inputs.service_name}}/vote-deployment.yaml"
+                test -d "./${{inputs.service_name}}"
+                test -f "./${{inputs.service_name}}/Dockerfile"
+                test -f "k8s-specifications/${{inputs.service_name}}/vote-deployment.yaml"
 
             - name: Generate Image Tag
               id: tag

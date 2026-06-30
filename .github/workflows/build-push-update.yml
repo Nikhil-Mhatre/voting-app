@@ -30,9 +30,9 @@ jobs:
 
             - name: Verify Files Existence
               run: |
-                test -d "./${{inputs.service_name}}"
-                test -f "./${{inputs.service_name}}/Dockerfile"
-                test -f "k8s-specifications/${{inputs.service_name}}-deployment.yaml"
+                  test -d "./${{inputs.service_name}}"
+                  test -f "./${{inputs.service_name}}/Dockerfile"
+                  test -f "k8s-specifications/${{inputs.service_name}}-deployment.yaml"
 
             - name: Generate Image Tag
               id: tag
@@ -64,7 +64,7 @@ jobs:
             - name: Build & Push Docker Image
               uses: docker/build-push-action@v6
               with:
-                  context: ${{env.BUILD_CONTEXT}} 
+                  context: ${{env.BUILD_CONTEXT}}
                   file: ${{env.DOCKER_FILE}}
                   push: true
 
@@ -82,7 +82,6 @@ jobs:
             group: manifest-push
             cancel-in-progress: false
         env:
-           
             UPDATED_IMAGE_TAG: ${{ secrets.DOCKER_USERNAME }}/voting-app_${{ inputs.service_name }}:${{ needs.create-image-tag.outputs.image_tag }}
             MANIFEST_PATH: "k8s-specifications/${{ inputs.service_name }}-deployment.yaml"
 
@@ -101,37 +100,37 @@ jobs:
                     | select(.name=="${{ inputs.service_name }}")
                     | .image)
                     = "${{ env.UPDATED_IMAGE_TAG }}"
-                    ' "${{env.MANIFEST_PATH}}"
+                  ' "${{env.MANIFEST_PATH}}"
 
             - name: Verify Changes
               run: |
-                git diff
+                  git diff
 
             - name: Config Git
               run: |
-                git config user.name "github-actions[bot]"
-                git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
             - name: Commit Changes
               run: |
-                git add "${{ env.MANIFEST_PATH }}"
+                  git add "${{ env.MANIFEST_PATH }}"
 
-                if git diff --cached --quiet; then
-                    echo "No changes."
-                    exit 0
-                fi
+                  if git diff --cached --quiet; then
+                      echo "No changes."
+                      exit 0
+                  fi
 
 
-                git commit -m "chore(k8s): update ${{inputs.service_name}} image to ${{needs.create-image-tag.outputs.image_tag}}"
+                  git commit -m "chore(k8s): update ${{inputs.service_name}} image to ${{needs.create-image-tag.outputs.image_tag}}"
 
-                # Retry loop to handle concurrent pushes from other services
-                for i in 1 2 3 4 5; do
-                    echo "Push attempt $i..."
-                    git pull --rebase origin ${{ github.ref_name }} && \
-                    git push origin HEAD:${{ github.ref_name }} && exit 0
-                    echo "Push failed, retrying in $((i * 5))s..."
-                    sleep $((i * 5))
-                done
+                  # Retry loop to handle concurrent pushes from other services
+                  for i in 1 2 3 4 5; do
+                      echo "Push attempt $i..."
+                      git pull --rebase origin ${{ github.ref_name }} && \
+                      git push origin HEAD:${{ github.ref_name }} && exit 0
+                      echo "Push failed, retrying in $((i * 5))s..."
+                      sleep $((i * 5))
+                  done
 
-                echo "All push attempts failed."
-                exit 1
+                  echo "All push attempts failed."
+                  exit 1

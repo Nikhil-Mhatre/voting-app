@@ -15,5 +15,5 @@ spec:
         app: worker
     spec:
       containers:
-        - image: nikhilmhatre0317/voting-app_worker:3f59f58
+        - image: nikhilmhatre0317/voting-app_worker:fb90b6a
           name: worker

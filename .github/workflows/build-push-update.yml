@@ -37,7 +37,7 @@ jobs:
             - name: Generate Image Tag
               id: tag
               run: |
-                  SHORT_SHA=${git rev-parse --short HEAD}
+                  SHORT_SHA=$(git rev-parse --short HEAD)
                   echo "image_tag=$SHORT_SHA" >> "$GITHUB_OUTPUT"
 
     build-and-push-image:

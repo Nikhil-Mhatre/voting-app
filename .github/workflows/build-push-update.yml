@@ -30,7 +30,7 @@ jobs:
 
             - name: Verify Files Existence
               run: |
-                  test -d "./${{inputs.service_name}}" # ./vote
+                  test -d "./${{inputs.service_name}}"
                   test -f "./${{inputs.service_name}}/Dockerfile"
                   test -f "k8s-specifications/${{inputs.service_name}}/vote-deployment.yaml"
 
@@ -45,7 +45,7 @@ jobs:
         needs: create-image-tag
         runs-on: ubuntu-latest
         env:
-            IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/voting-app_${{ inputs.service_name }} # nikhilmhatre0317/voting-app_vote
+            IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/voting-app_${{ inputs.service_name }}
             BUILD_CONTEXT: "./${{ inputs.service_name }}"
             DOCKER_FILE: "./${{ inputs.service_name }}/Dockerfile"
         steps:
@@ -64,7 +64,7 @@ jobs:
             - name: Build & Push Docker Image
               uses: docker/build-push-action@v6
               with:
-                  context: ${{env.BUILD_CONTEXT}} # ./vote
+                  context: ${{env.BUILD_CONTEXT}} 
                   file: ${{env.DOCKER_FILE}}
                   push: true
 
@@ -81,10 +81,10 @@ jobs:
             group: manifest-push
             cancel-in-progress: false
         env:
-            # nikhilmhatre0317/voting-app_vote:231qdasjdhas
+           
             UPDATED_IMAGE_TAG: ${{ secrets.DOCKER_USERNAME }}/voting-app_${{ inputs.service_name }}:${{ needs.create-image-tag.outputs.image_tag }}
             MANIFEST_PATH: "k8s-specifications/${{ inputs.service_name }}-deployment.yaml"
-        #    k8s-specifications/vote-deployment.yaml
+
         steps:
             - name: Install yq
               run: |

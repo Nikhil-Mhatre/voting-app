@@ -68,8 +68,9 @@ jobs:
                   file: ${{env.DOCKER_FILE}}
                   push: true
 
-                  tag: |
+                  tags: |
                       ${{env.IMAGE_NAME}}:${{needs.create-image-tag.outputs.image_tag}}
+                      ${{env.IMAGE_NAME}}:latest
 
     update-manifest:
         name: Update Manifest
